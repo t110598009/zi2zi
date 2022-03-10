@@ -8,7 +8,10 @@ import glob
 import imageio
 import scipy.misc as misc
 import numpy as np
-from cStringIO import StringIO
+from PIL import Image
+## StringIO only for str or none
+#from cStringIO import StringIO
+from io import BytesIO
 
 
 def pad_seq(seq, batch_size):
@@ -22,7 +25,8 @@ def pad_seq(seq, batch_size):
 
 
 def bytes_to_file(bytes_img):
-    return StringIO(bytes_img)
+    #return StringIO(bytes_img)
+    return BytesIO(bytes_img)
 
 
 def normalize_image(img):
@@ -45,7 +49,9 @@ def read_split_image(img):
 
 def shift_and_resize_image(img, shift_x, shift_y, nw, nh):
     w, h, _ = img.shape
-    enlarged = misc.imresize(img, [nw, nh])
+    ## Throw TypeError: Cannot handle this data type: (1, 1, 3), <f8, so using np.uint8
+    #enlarged = misc.imresize(img, [nw, nh])
+    enlarged = np.array(Image.fromarray(np.uint8(img)).resize(size = (nw, nh)))
     return enlarged[shift_x:shift_x + w, shift_y:shift_y + h]
 
 
@@ -66,12 +72,14 @@ def merge(images, size):
 
 def save_concat_images(imgs, img_path):
     concated = np.concatenate(imgs, axis=1)
-    misc.imsave(img_path, concated)
+    #misc.imsave(img_path, concated)
+    imageio.imwrite(img_path, concated)
 
 
 def compile_frames_to_gif(frame_dir, gif_file):
     frames = sorted(glob.glob(os.path.join(frame_dir, "*.png")))
     print(frames)
-    images = [misc.imresize(imageio.imread(f), interp='nearest', size=0.33) for f in frames]
+    #images = [misc.imresize(imageio.imread(f), interp='nearest', size=0.33) for f in frames]
+    images = [np.array(Image.fromarray(np.uint8(imageio.imread(f)), interp='nearest').resize(size=0.33)) for f in frames]
     imageio.mimsave(gif_file, images, duration=0.1)
     return gif_file

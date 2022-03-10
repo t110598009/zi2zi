@@ -3,3 +3,6 @@ datasets/
 experiments/
 .DS_Store
 .idea/
+font
+image*/
+*.txt
