@@ -4,6 +4,39 @@
   <img src="assets/intro.gif" alt="animation", style="width: 350px;"/>
 </p>
 
+## How to Use
+### Step Zero
+Download tons of fonts as you please
+### Requirement
+* Python ~~2.7~~ 3.7
+* CUDA
+* cudnn
+* Tensorflow ~~>= 1.0.1~~ 1.14.0
+* Pillow(PIL)
+* numpy >= 1.12.1
+* scipy ~~>= 0.18.1~~ 1.2.1
+* imageio
+
+```sh
+python font2img.py --src_font=source.ttf --dst_font=target.ttf --charset=CN_T  --sample_count=1000 --sample_dir=image_data_dir --label=0 --filter=1 --shuffle=1
+```
+
+```
+python package.py --dir=image_data_dir --save_dir=experiment/data
+```
+
+```
+python train.py --experiment_dir=experiment --experiment_id=0 --batch_size=16 --lr=0.001 --epoch=40 --sample_steps=50 --schedule=20 --L1_penalty=100 --Lconst_penalty=15
+```
+
+
+# Original author
+# zi2zi: Master Chinese Calligraphy with Conditional Adversarial Networks
+
+<p align="center">
+  <img src="assets/intro.gif" alt="animation", style="width: 350px;"/>
+</p>
+
 ## Introduction
 Learning eastern asian language typefaces with GAN. zi2zi(字到字, meaning from character to character) is an application and extension of the recent popular [pix2pix](https://github.com/phillipi/pix2pix) model to Chinese characters.
 
