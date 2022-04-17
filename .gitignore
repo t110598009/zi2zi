@@ -5,7 +5,7 @@ datasets/
 .idea/
 
 experiment/*
-experiment/data/*.obj
+experiment/data/*
 !experiment/data
 font/
 image*/

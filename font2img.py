@@ -20,18 +20,21 @@ CN_CHARSET = None
 CN_T_CHARSET = None
 JP_CHARSET = None
 KR_CHARSET = None
+TWVal_CHARSET = None
+TWTrain_CHARSET = None
 
 DEFAULT_CHARSET = "./charset/cjk.json"
 
 
 def load_global_charset():
-    global CN_CHARSET, JP_CHARSET, KR_CHARSET, CN_T_CHARSET
+    global CN_CHARSET, JP_CHARSET, KR_CHARSET, CN_T_CHARSET, TWTrain_CHARSET, TWVal_CHARSET
     cjk = json.load(open(DEFAULT_CHARSET))
     CN_CHARSET = cjk["gbk"]
     JP_CHARSET = cjk["jp"]
     KR_CHARSET = cjk["kr"]
     CN_T_CHARSET = cjk["gb2312_t"]
-
+    TWTrain_CHARSET = cjk["twTrain"]
+    TWVal_CHARSET = cjk["twVal"]
 
 def draw_single_char(ch, font, canvas_size, x_offset, y_offset):
     img = Image.new("RGB", (canvas_size, canvas_size), (255, 255, 255))
@@ -110,7 +113,7 @@ parser.add_argument('--label', dest='label', type=int, default=0, help='label as
 args = parser.parse_args()
 
 if __name__ == "__main__":
-    if args.charset in ['CN', 'JP', 'KR', 'CN_T']:
+    if args.charset in ['CN', 'JP', 'KR', 'CN_T', 'TWTrain', 'TWVal']:
         charset = locals().get("%s_CHARSET" % args.charset)
     else:
         charset = [c for c in open(args.charset).readline()[:-1].decode("utf-8")]
