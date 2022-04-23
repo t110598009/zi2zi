@@ -32,7 +32,10 @@ args = parser.parse_args()
 
 
 def main(_):
-    config = tf.ConfigProto()
+    if not os.path.isdir(args.save_dir):
+        os.makedirs(args.save_dir)
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.3)
+    config = tf.ConfigProto(gpu_options=gpu_options)
     config.gpu_options.allow_growth = True
 
     with tf.Session(config=config) as sess:

@@ -15,6 +15,11 @@ def pickle_examples(paths, train_path, val_path, train_val_split=0.1):
     Compile a list of examples into pickled format, so during
     the training, all io will happen in memory
     """
+    for path in [train_path, val_path]:
+        dirpath = os.path.dirname(path)
+        if not os.path.isdir(dirpath):
+            os.makedirs(dirpath)
+    
     with open(train_path, 'wb') as ft:
         with open(val_path, 'wb') as fv:
             for p in paths:
@@ -29,6 +34,10 @@ def pickle_examples(paths, train_path, val_path, train_val_split=0.1):
                     else:
                         pickle.dump(example, ft)
 
+    if os.stat(train_path).st_size == 0:
+        os.remove(train_path)
+    if os.stat(val_path).st_size == 0:
+        os.remove(val_path)
 
 parser = argparse.ArgumentParser(description='Compile list of images into a pickled object for training')
 parser.add_argument('--dir', dest='dir', required=True, help='path of examples')

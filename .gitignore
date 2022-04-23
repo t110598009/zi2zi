@@ -7,7 +7,7 @@ datasets/
 experiment/*
 experiment/data/*
 !experiment/data
-font/
+
 image*/
 image*/*.jpg
 !image_data_dir/
