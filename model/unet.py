@@ -407,14 +407,19 @@ class UNet(object):
             p = os.path.join(save_dir, "inferred_%04d.png" % count)
             save_concat_images(imgs, img_path=p)
             print("generated images saved at %s" % p)
-
+        def save_img(imgs, count):
+            p = os.path.join(save_dir, "source_imgs_%04d.png" % count)
+            save_concat_images(imgs, img_path=p)
+            print("generated images saved at %s" % p)
         count = 0
         batch_buffer = list()
         for labels, source_imgs in source_iter:
             fake_imgs = self.generate_fake_samples(source_imgs, labels)[0]
             merged_fake_images = merge(scale_back(fake_imgs), [self.batch_size, 1])
             batch_buffer.append(merged_fake_images)
-            if len(batch_buffer) == 10:
+            if self.batch_size == 1:
+                save_img(fake_imgs, count)
+            elif len(batch_buffer) == 10:
                 save_imgs(batch_buffer, count)
                 batch_buffer = list()
             count += 1
