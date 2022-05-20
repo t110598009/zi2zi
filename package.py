@@ -24,11 +24,12 @@ def pickle_examples(paths, train_path, val_path, train_val_split=0.1):
         with open(val_path, 'wb') as fv:
             for p in paths:
                 label = int(os.path.basename(p).split("_")[0])
+                name = os.path.basename(p).split("_")[1].split(".")[0]
                 with open(p, 'rb') as f:
                     print("img %s" % p, label)
                     img_bytes = f.read()
                     r = random.random()
-                    example = (label, img_bytes)
+                    example = (label, img_bytes, name) # name use to rename our output images.
                     if r < train_val_split:
                         pickle.dump(example, fv)
                     else:

@@ -67,8 +67,9 @@ def get_batch_iter(examples, batch_size, augment):
             batch = padded[i: i + batch_size]
             labels = [e[0] for e in batch]
             processed = [process(e[1]) for e in batch]
+            filenames = [e[2] for e in batch]
             # stack into tensor
-            yield labels, np.array(processed).astype(np.float32)
+            yield labels, np.array(processed).astype(np.float32), filenames
 
     return batch_iter()
 
@@ -102,8 +103,8 @@ class TrainDataProvider(object):
             np.random.shuffle(val_examples)
         while True:
             val_batch_iter = get_batch_iter(val_examples, batch_size, augment=False)
-            for labels, examples in val_batch_iter:
-                yield labels, examples
+            for labels, examples, filenames in val_batch_iter:
+                yield labels, examples # filenames only useful in infer
 
     def compute_total_batch_num(self, batch_size):
         """Total padded batch num"""
@@ -125,18 +126,18 @@ class InjectDataProvider(object):
     def get_single_embedding_iter(self, batch_size, embedding_id):
         examples = self.data.examples[:]
         batch_iter = get_batch_iter(examples, batch_size, augment=False)
-        for _, images in batch_iter:
+        for _, images, filenames in batch_iter:
             # inject specific embedding style here
             labels = [embedding_id] * batch_size
-            yield labels, images
+            yield labels, images, filenames # filenames for rename images.
 
     def get_random_embedding_iter(self, batch_size, embedding_ids):
         examples = self.data.examples[:]
         batch_iter = get_batch_iter(examples, batch_size, augment=False)
-        for _, images in batch_iter:
+        for _, images, filenames in batch_iter:
             # inject specific embedding style here
             labels = [random.choice(embedding_ids) for i in range(batch_size)]
-            yield labels, images
+            yield labels, images, filenames
 
 
 class NeverEndingLoopingProvider(InjectDataProvider):

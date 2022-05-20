@@ -407,23 +407,23 @@ class UNet(object):
             p = os.path.join(save_dir, "inferred_%04d.png" % count)
             save_concat_images(imgs, img_path=p)
             print("generated images saved at %s" % p)
-        def save_img(imgs, count):
-            p = os.path.join(save_dir, "source_imgs_%04d.png" % count)
+        def save_img(imgs, filenames):
+            p = os.path.join(save_dir, "%s.png" % filenames[0]) # This filenames list only provide a name.
             save_concat_images(imgs, img_path=p)
             print("generated images saved at %s" % p)
         count = 0
         batch_buffer = list()
-        for labels, source_imgs in source_iter:
+        for labels, source_imgs, filenames in source_iter:
             fake_imgs = self.generate_fake_samples(source_imgs, labels)[0]
             merged_fake_images = merge(scale_back(fake_imgs), [self.batch_size, 1])
             batch_buffer.append(merged_fake_images)
             if self.batch_size == 1:
-                save_img(fake_imgs, count)
+                save_img(fake_imgs, filenames)
             elif len(batch_buffer) == 10:
                 save_imgs(batch_buffer, count)
                 batch_buffer = list()
             count += 1
-        if batch_buffer:
+        if batch_buffer and self.batch_size != 1:
             # last batch
             save_imgs(batch_buffer, count)
 
@@ -545,7 +545,7 @@ class UNet(object):
 
             for bid, batch in enumerate(train_batch_iter):
                 counter += 1
-                labels, batch_images = batch
+                labels, batch_images, filenames = batch # filenames only useful in infer
                 shuffled_ids = labels[:]
                 if flip_labels:
                     np.random.shuffle(shuffled_ids)

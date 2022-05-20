@@ -88,7 +88,10 @@ def font2img(src, dst, charset, char_size, canvas_size,
             break
         e = draw_example(c, src_font, dst_font, canvas_size, x_offset, y_offset, filter_hashes)
         if e:
-            e.save(os.path.join(sample_dir, "%d_%04d.jpg" % (label, count)))
+            if args.name_as_word == False: # Same as before.
+                e.save(os.path.join(sample_dir, "%d_%04d.jpg" % (label, count)))
+            else: # Use char's hex values to name image.
+                e.save(os.path.join(sample_dir, "%d_%s.jpg" % (label, "u+" + hex(ord(c)).replace("0x", "") )))
             count += 1
             if count % 100 == 0:
                 print("processed %d chars" % count)
@@ -109,7 +112,7 @@ parser.add_argument('--y_offset', dest='y_offset', type=int, default=20, help='y
 parser.add_argument('--sample_count', dest='sample_count', type=int, default=1000, help='number of characters to draw')
 parser.add_argument('--sample_dir', dest='sample_dir', help='directory to save examples')
 parser.add_argument('--label', dest='label', type=int, default=0, help='label as the prefix of examples')
-
+parser.add_argument('--name_as_word', type=bool, default=True, help='image\'s name as word')
 args = parser.parse_args()
 
 if __name__ == "__main__":
